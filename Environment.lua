@@ -60,13 +60,6 @@ end
 setmetatable(Environment, {__call = construct})
 
 function Environment:schedule(event, delay)
-	print("Inside of Environment:schedule")
-	print("event is")
-	print(event)
-	for k, v in pairs(event) do
-		print("["..tostring(k).."] = "..tostring(v))
-	end
-	print("----Environment:schedule-----")
 	delay = delay or 0
 	List.pushright(self.queue, { 
 		time = self.now + delay, eid = self.event_id,
@@ -85,20 +78,20 @@ function Environment:process(generator)
 end
 
 
-function Environment:run()
+function Environment:run(limit)
+
 	while (List.length(self.queue) > 0) do
+		if (self.now >= limit) then
+			return
+		end
 		local triple = List.popleft(self.queue)
 		self.now = triple.time
 		local eid = triple.eid
 		local current_event = triple.event
-		print("Inside of Environment:run")
-		print("current_event is")
-		print(current_event)
-		for k, v in pairs(current_event) do
-			print("["..tostring(k).."] = "..tostring(v))
-		end
-		print("--------Environment:run------")
 		for _, callback in ipairs(current_event.callbacks) do
+			if (self.now >= limit) then
+				return
+			end
 			callback(current_event)
 		end
 	end

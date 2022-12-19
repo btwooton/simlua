@@ -18,19 +18,8 @@ function Process:resume(event)
 		local send = function() 
 			return coroutine.resume(generator, nil) 
 		end
-		print("Inside of Process:resume")
 		local status, resume_status, event = pcall(send)
-		print("Value of status is")
-		print(status)
-		print("Value of resume_status is")
-		print(resume_status)
-		print("Value of event is")
-		print(event)
-		for k, v in pairs(event) do
-			print("["..tostring(k).."] = "..tostring(v))
-		end
-		print("----Process:resume---")
-		if (status and resume_status) then
+		if (status and resume_status and event) then
 			table.insert(event.callbacks, function(event) self:resume(event) end)
 		else
 			return

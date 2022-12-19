@@ -21,8 +21,29 @@ function alarm2(env)
 	return thread
 end
 
-env:process(alarm(env))
-env:process(alarm2(env))
 
-env:run()
+function car_process(env)
+	function charge(duration)
+		local thread = coroutine.create(function()
+			coroutine.yield(env:timeout(duration))
+		end)
+		return thread
+	end
+	local thread = coroutine.create(function()
+		while(true) do
+			print("Start parking and charging at " .. tostring(env.now))
+			charge_duration = 5
+			coroutine.yield(env:timeout(charge_duration))
+			 
+			-- The charge process has finished and we can start driving
+			print("Start driving at " .. tostring(env.now))
+			trip_duration = 2
+			coroutine.yield(env:timeout(trip_duration))
+		end
+	end)
+	return thread
+end
+
+env:process(car_process(env))
+env:run(15)
 
