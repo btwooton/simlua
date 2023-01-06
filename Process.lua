@@ -20,7 +20,10 @@ function Process:resume(event)
 		end
 		local status, resume_status, event = pcall(send)
 		if (status and resume_status and event) then
-			table.insert(event.callbacks, function(event) self:resume(event) end)
+			table.insert(
+				event.callbacks, 
+				function(event) self:resume(event) end
+			)
 		else
 			return
 		end

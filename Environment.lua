@@ -1,6 +1,6 @@
 local Timeout = require "Timeout"
 local Process = require "Process"
-local ListQueue = require "ListQueue"
+local PriorityQueue = require "PriorityQueue"
 
 local Environment = {}
 Environment.__index = Environment
@@ -9,7 +9,7 @@ Environment.__index = Environment
 local function construct(self)
 	local object = {
 		now = 0,
-		queue = ListQueue(),
+		queue = PriorityQueue(),
 		event_id = 0
 	}
 	setmetatable(object, Environment)
@@ -20,10 +20,14 @@ setmetatable(Environment, {__call = construct})
 
 function Environment:schedule(event, delay)
 	delay = delay or 0
-	self.queue:pushright({ 
+	self.queue:push(setmetatable({ 
 		time = self.now + delay, eid = self.event_id,
 		["event"] = event
-	})
+	}, {
+		__lt = function(a, b) return a['time'] < b['time'] end,
+		__gt = function(a, b) return a['time'] > b['time'] end,
+		__eq = function(a, b) return a['time'] == b['time'] end
+	}))
 	self.event_id = self.event_id + 1
 end
 
@@ -39,11 +43,11 @@ end
 
 function Environment:run(limit)
 
-	while (self.queue:length() > 0) do
+	while (self.queue:getLength() > 0) do
 		if (self.now >= limit) then
 			return
 		end
-		local triple = self.queue:popleft()
+		local triple = self.queue:pop()
 		self.now = triple.time
 		local eid = triple.eid
 		local current_event = triple.event

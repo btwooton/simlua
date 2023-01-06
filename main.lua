@@ -44,6 +44,7 @@ function car_process(env)
 	return thread
 end
 
-env:process(car_process(env))
-env:run(15)
+env:process(alarm2(env))
+env:process(alarm(env))
+env:run(250)
 

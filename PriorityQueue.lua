@@ -42,7 +42,27 @@ function PriorityQueue:pop()
 	return value
 end
 
-function PriorityQueue:length()
+function PriorityQueue:heapifyDownward()
+	local current_idx = 1
+	while current_idx <= self.length do
+		local swap_child = current_idx * 2
+		if swap_child <= self.length and self[current_idx] > self[swap_child] then
+			local right_child = current_idx * 2 + 1
+			if right_child <= self.length and self[right_child] < self[swap_child] then
+				swap_child = right_child
+			end
+			local temp = self[swap_child]
+			self[swap_child] = self[current_idx]
+			self[current_idx] = temp
+			current_idx = swap_child
+		else
+			return
+		end
+	end
+
+end
+
+function PriorityQueue:getLength()
 	return self.length
 end
 
