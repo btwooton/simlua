@@ -33,7 +33,7 @@ function PriorityQueue:heapifyUpward(idx)
 end
 
 function PriorityQueue:pop()
-	if self.length == 0 then return nil end
+	if self.length == 0 then error("queue is empty") end
 	local value = self[1]
 	self[1] = self[self.length]
 	self[self.length] = nil -- allow garbage collection
